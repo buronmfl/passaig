@@ -1,0 +1,24 @@
+# Fichiers sensibles - NE JAMAIS COMMITER
+secrets/
+.env
+
+# Données de production
+vw-data/
+backups/
+caddy-data/
+caddy-config/
+
+# Logs
+*.log
+
+# Fichiers temporaires
+*.tmp
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
