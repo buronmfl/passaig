@@ -49,7 +49,6 @@ if [ ! -f secrets/admin_token.txt ]; then
     
     echo -e "${GREEN}ADMIN_TOKEN généré et stocké dans secrets/admin_token.txt${NC}"
     echo -e "${YELLOW}IMPORTANT: Conservez ce token en lieu sûr !${NC}"
-    echo -e "${YELLOW}Token: $ADMIN_TOKEN${NC}"
     echo ""
     echo -e "${YELLOW}Appuyez sur Entrée pour continuer...${NC}"
     read
@@ -57,62 +56,26 @@ else
     echo -e "${GREEN}ADMIN_TOKEN existant trouvé.${NC}"
 fi
 
-# Configurer le mot de passe SMTP
-if [ ! -f secrets/smtp_password.txt ]; then
-    echo -e "${YELLOW}Configuration du mot de passe SMTP...${NC}"
-    echo -n "Entrez le mot de passe SMTP: "
-    read -s SMTP_PASSWORD
-    echo ""
-    echo "$SMTP_PASSWORD" > secrets/smtp_password.txt
-    chmod 600 secrets/smtp_password.txt
-    echo -e "${GREEN}Mot de passe SMTP configuré.${NC}"
-else
-    echo -e "${GREEN}Mot de passe SMTP existant trouvé.${NC}"
-fi
-
 # Créer le fichier .env s'il n'existe pas
 if [ ! -f .env ]; then
     echo -e "${YELLOW}Création du fichier .env...${NC}"
     cp .env.example .env
-    echo -e "${YELLOW}Veuillez éditer le fichier .env avec vos paramètres SMTP.${NC}"
+    echo -e "${YELLOW}Veuillez éditer le fichier .env${NC}"
     echo -e "${YELLOW}Appuyez sur Entrée une fois terminé...${NC}"
     read
 fi
-
-# Personnalisation des logos et favicons
-echo ""
-echo -e "${YELLOW}=== Personnalisation des logos ===${NC}"
-echo "Placez vos fichiers personnalisés dans:"
-echo "  - vw-data/images/custom.logo.png (pour le logo)"
-echo "  - vw-data/images/favicon.ico (pour le favicon)"
-echo "  - vw-data/images/favicon-16x16.png"
-echo "  - vw-data/images/favicon-32x32.png"
-echo ""
-
-# Définir les permissions correctes
-echo -e "${GREEN}Configuration des permissions...${NC}"
-chmod 600 secrets/*
-chmod -R 755 vw-data
-chmod -R 755 caddy-data
-chmod -R 755 caddy-config
-chmod 755 backups
 
 # Afficher les informations de déploiement
 echo ""
 echo -e "${YELLOW}Prochaines étapes:${NC}"
 echo "1. Vérifiez et modifiez le fichier .env avec vos paramètres SMTP"
-echo "2. Placez vos logos personnalisés dans vw-data/images/"
-echo "3. Lancez le déploiement avec: docker-compose up -d"
+echo "2. Lancez le déploiement avec: docker-compose up -d"
 echo ""
 echo -e "${GREEN}Pour démarrer Vaultwarden:${NC}"
 echo "  docker-compose up -d"
 echo ""
 echo -e "${GREEN}Pour voir les logs:${NC}"
 echo "  docker-compose logs -f"
-echo ""
-echo -e "${GREEN}Pour accéder à l'interface admin:${NC}"
-echo "  https://bank-ig.lfmn.dgac.aviation/admin"
-echo "  Token: $(cat secrets/admin_token.txt)"
 echo ""
 echo -e "${YELLOW}Les sauvegardes seront créées automatiquement dans le dossier backups/${NC}"
 echo ""

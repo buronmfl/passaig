@@ -9,12 +9,11 @@ services:
       - no-new-privileges:true
     environment:
       # Domaine et configuration de base
-      - DOMAIN=https://bank-ig.lfmn.dgac.aviation
+      - DOMAIN=${NOM_DOMAINE}
       
       # Sécurité - Inscriptions désactivées
       - SIGNUPS_ALLOWED=false
       - SIGNUPS_VERIFY=true
-      - SIGNUPS_DOMAINS_WHITELIST=
       - INVITATIONS_ALLOWED=true  # Permet les invitations par admin uniquement
       - SHOW_PASSWORD_HINT=false
       
@@ -23,40 +22,13 @@ services:
       
       # Templates et personnalisation
       - TEMPLATES_FOLDER=/data/templates
-      
-      # Configuration SMTP (à personnaliser selon vos besoins)
-      - SMTP_HOST=${SMTP_HOST:-smtp.example.com}
-      - SMTP_FROM=${SMTP_FROM:-vaultwarden@example.com}
-      - SMTP_PORT=${SMTP_PORT:-587}
-      - SMTP_SECURITY=${SMTP_SECURITY:-starttls}
-      - SMTP_USERNAME=${SMTP_USERNAME}
-      - SMTP_PASSWORD_FILE=/run/secrets/smtp_password
-      
-      # Icônes et personnalisation
-      - ICON_CACHE_TTL=2592000
-      - ICON_CACHE_NEGTTL=259200
-      - ICON_DOWNLOAD_TIMEOUT=10
-      
-      # Performance et limites
-      - WEB_VAULT_ENABLED=true
-      - WEBSOCKET_ENABLED=true
-      - SENDS_ALLOWED=true
-      - EMERGENCY_ACCESS_ALLOWED=true
-      
-      # Logs
-      - LOG_LEVEL=info
-      - EXTENDED_LOGGING=true
-      
+
     volumes:
       - ./vw-data:/data
       - ./vw-data/images:/web-vault/images  # Pour les logos/favicons personnalisés
       
     secrets:
       - admin_token
-      - smtp_password
-    
-    depends_on:
-      - caddy
       
     networks:
       - vaultwarden-network
@@ -71,13 +43,11 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      - DOMAIN=https://bank-ig.lfmn.dgac.aviation
+      - DOMAIN=${NOM_DOMAINE}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./caddy-data:/data
       - ./caddy-config:/config
-    depends_on:
-      - vaultwarden
     networks:
       - vaultwarden-network
 
@@ -93,8 +63,6 @@ services:
       # Conserver 30 jours de sauvegardes
       - BACKUP_RETENTION_DAYS=30
       - BACKUP_PRUNING_PREFIX=vaultwarden-backup-
-      # Notifications (optionnel)
-      - NOTIFICATION_URLS=${BACKUP_NOTIFICATION_URL:-}
     volumes:
       - ./vw-data:/backup/vw-data:ro
       - ./backups:/archive
