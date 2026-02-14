@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   vaultwarden:
     image: vaultwarden/server:latest
@@ -14,7 +12,7 @@ services:
       # Sécurité - Inscriptions désactivées
       - SIGNUPS_ALLOWED=false
       - SIGNUPS_VERIFY=true
-      - INVITATIONS_ALLOWED=true  # Permet les invitations par admin uniquement
+      - INVITATIONS_ALLOWED=true
       - SHOW_PASSWORD_HINT=false
       
       # Admin Token - UTILISE LE SECRET
@@ -23,15 +21,17 @@ services:
       # Templates et personnalisation
       - TEMPLATES_FOLDER=/data/templates
 
+      - WEBSOCKET_ENABLED=true
+
     volumes:
       - ./vw-data:/data
       - ./vw-data/images:/web-vault/images  # Pour les logos/favicons personnalisés
-      
-    secrets:
-      - admin_token
-      
+    
     networks:
       - vaultwarden-network
+    
+    secrets:
+      - admin_token
 
   caddy:
     image: caddy:2-alpine
@@ -46,8 +46,10 @@ services:
       - DOMAIN=${NOM_DOMAINE}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./caddy-data:/data
       - ./caddy-config:/config
+      - ./caddy-data:/data
+    depends_on:
+      - vaultwarden
     networks:
       - vaultwarden-network
 
@@ -71,10 +73,7 @@ services:
 
 networks:
   vaultwarden-network:
-    driver: bridge
 
 secrets:
   admin_token:
     file: ./secrets/admin_token.txt
-  smtp_password:
-    file: ./secrets/smtp_password.txt

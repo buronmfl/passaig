@@ -1,36 +1,4 @@
 example.local {
+    reverse_proxy vaultwarden:80
     tls internal
-    
-    # Headers de sécurité
-    header {
-        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-        X-Frame-Options "SAMEORIGIN"
-        X-Content-Type-Options "nosniff"
-        X-XSS-Protection "1; mode=block"
-        Referrer-Policy "same-origin"
-        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'self';"
-        -Server
-    }
-    
-    # Encodage
-    encode gzip zstd
-    
-    # Reverse proxy vers Vaultwarden
-    reverse_proxy vaultwarden:80 {
-        # WebSocket support pour les notifications en temps réel
-        header_up X-Real-IP {remote_host}
-        header_up X-Forwarded-For {remote_host}
-        header_up X-Forwarded-Proto {scheme}
-    }
-    
-    # Logs d'accès
-    log {
-        output file /data/access.log
-        format json
-    }
-}
-
-# Redirection HTTP vers HTTPS
-http://example.com {
-    redir https://{host}{uri} permanent
 }
